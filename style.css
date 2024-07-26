@@ -1,0 +1,113 @@
+:root {
+  --color0: rgb(120, 171, 168);
+  --color1: rgb(200, 207, 160);
+  --color2: rgb(252, 220, 148);
+  --color3: rgb(239, 156, 102);
+  --guess-color: lightgrey;
+}
+
+body {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+main {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: center;
+}
+
+p {
+  font-size: 25px;
+}
+
+#score_bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#score {
+  visibility: hidden;
+}
+
+.spacer {
+  visibility: hidden;
+}
+
+.best {
+  visibility: hidden;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#given .tile {
+  border-color: var(--color0);
+}
+
+.best .tile {
+  border-color: var(--color1);
+}
+
+#guess .tile {
+  border-color: var(--guess-color);
+}
+
+.tile {
+  margin: 5px 0px;
+  width: 40px;
+  height: 40px;
+  border: solid;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keyboard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.key {
+  margin: 2px 0px;
+  min-width: 30px;
+  height: 40px;
+  border: solid;
+  border-radius: 5px;
+  background-color: grey;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#key_enter {
+  background-color: var(--color0);
+  visibility: hidden;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  text-align: inherit;
+  font: inherit;
+  border-radius: 0;
+  appearance: none;
+}
