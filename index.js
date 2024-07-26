@@ -75,7 +75,10 @@ const commit_guess = () => {
       window.document.getElementById("after_given").style.visibility = "visible";
     }
 
-    window.document.getElementById("key_enter").style.visibility = "visible";
+    if (current_word_ix < 4) {
+      window.document.getElementById("key_enter").style.visibility = "visible";
+    }
+
     window.document.getElementById("score").style.visibility = "visible";
     window.document.querySelector(':root').style.setProperty('--guess-color', 'rgb(239, 156, 102)');
 
@@ -87,7 +90,7 @@ const commit_guess = () => {
 
 const handle_key = (k) => {
   if (current_guess.length == 5) {
-    if (current_word_ix == 5) {
+    if (current_word_ix == 4) {
       return;
     }
 
