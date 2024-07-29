@@ -1,3 +1,6 @@
+var selected_words = [];
+var selected_words_set;
+
 var day_seed;
 var prng_seed;
 
@@ -54,11 +57,11 @@ const update_row_view = (id, chars) => {
 
 const commit_guess = () => {
   const given = day_words[current_word_ix];
-  const given_ix = binary_search_index(solutions, given).index;
+  const given_ix = binary_search_index(selected_words, given).index;
   const guess = current_guess.join("");
 
-  if (guess != given && candidates.has(guess)) {
-    const search = binary_search_index(solutions, guess);
+  if (guess != given && selected_words_set.has(guess)) {
+    const search = binary_search_index(selected_words, guess);
     const score = Math.abs(search.index - given_ix) + ((search.found) ? 0 : 1);
 
     current_score = score;
@@ -66,12 +69,12 @@ const commit_guess = () => {
     update_score_bar();
 
     if (given_ix > 0) {
-      update_row_view("before_given", solutions[given_ix - 1]);
+      update_row_view("before_given", selected_words[given_ix - 1]);
       window.document.getElementById("before_given").style.visibility = "visible";
     }
 
-    if (given_ix < solutions.length - 1) {
-      update_row_view("after_given", solutions[given_ix + 1]);
+    if (given_ix < selected_words.length - 1) {
+      update_row_view("after_given", selected_words[given_ix + 1]);
       window.document.getElementById("after_given").style.visibility = "visible";
     }
 
@@ -123,40 +126,47 @@ const handle_key = (k) => {
   }
 };
 
-window.onload = () => {
-  const start_date = new Date("01/01/2024");
-  day_seed = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
-  prng_seed = (day_seed > 0) ? day_seed : 42;
+fetch("./words.json")
+  .then((response) => response.json())
+  .then((selected_words_json) => {
+    selected_words = selected_words_json;
+    selected_words_set = new Set(selected_words);
 
-  for (i = 0; i < 5; i++) {
-    var word;
+    const start_date = new Date("01/01/2024");
+    day_seed = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
+    prng_seed = (day_seed > 0) ? day_seed : 42;
 
-    do {
-      var rand_ix = prng() % solutions.length;
-      word = solutions[rand_ix];
-    } while (day_words.includes(word));
+    for (i = 0; i < 5; i++) {
+      var word;
 
-    day_words.push(word);
-  }
+      do {
+        var rand_ix = prng() % selected_words.length;
+        word = selected_words[rand_ix];
+      } while (day_words.includes(word));
 
-  console.log(`DAY ${day_seed}`);
-  console.log(`words ${day_words}`);
+      day_words.push(word);
+    }
 
-  update_row_view("given", day_words[current_word_ix]);
+    console.log(`DAY ${day_seed}`);
+    console.log(`words ${day_words}`);
 
-  "abcdefghijklmnopqrstuvwxyz".split('').forEach((char) => {
-    window.document.getElementById(`key_${char}`).addEventListener("click", () => {
-      handle_key(char);
+    update_row_view("given", day_words[current_word_ix]);
+
+    "abcdefghijklmnopqrstuvwxyz".split('').forEach((char) => {
+      window.document.getElementById(`key_${char}`).addEventListener("click", () => {
+        handle_key(char);
+      });
     });
-  });
 
-  window.document.getElementById("key_enter").addEventListener("click", () => {
-    handle_key("Enter");
-  });
-  window.document.getElementById("key_del").addEventListener("click", () => {
-    handle_key("Delete");
-  });
-};
+    window.document.getElementById("key_enter").addEventListener("click", () => {
+      handle_key("Enter");
+    });
+    window.document.getElementById("key_del").addEventListener("click", () => {
+      handle_key("Delete");
+    });
+
+  })
+  .catch((error) => console.error("Error loading JSON file", error));
 
 window.addEventListener("keypress", (event) => {
   const k = event.key;
