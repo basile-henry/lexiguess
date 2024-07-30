@@ -1,3 +1,5 @@
+var solutions = small_set;
+
 var day_seed;
 var prng_seed;
 var day_word_ix;
@@ -179,6 +181,12 @@ window.onload = () => {
   const start_date = new Date("01/01/2024");
   day_seed = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
   prng_seed = 0xC0FFEE + day_seed;
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("big_set") == "1") {
+    solutions = big_set;
+    console.log("Using big set of words");
+  }
 
   day_word_ix = prng() % solutions.length;
   day_word = solutions[day_word_ix];
