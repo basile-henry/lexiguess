@@ -13,48 +13,20 @@ body {
 }
 
 main {
-  width: 100%;
-  max-width: 300px;
+  width: 95%;
+  height: 90vh;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   text-align: center;
 }
 
-p {
-  font-size: 25px;
-}
-
-#score_bar {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-#score {
-  visibility: hidden;
-}
-
-.spacer {
-  visibility: hidden;
-}
-
-.best {
-  visibility: hidden;
-}
-
 .row {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-#given .tile {
-  border-color: var(--color0);
-}
-
-.best .tile {
-  border-color: var(--color1);
+  align-items: center;
 }
 
 #guess .tile {
@@ -63,8 +35,8 @@ p {
 
 .tile {
   margin: 5px 0px;
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   border: solid;
   border-radius: 5px;
   font-weight: bold;
@@ -72,6 +44,27 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.word_score {
+  width: 45px;
+  font-size: 20px;
+  font-weight: bold;
+  color: grey;
+  text-align: right;
+}
+
+#total {
+  font-size: 25px;
+  visibility: hidden;
+}
+
+#total_score {
+  font-weight: bold;
+}
+
+#user_input {
+  margin-top: auto;
 }
 
 .keyboard {
@@ -94,11 +87,6 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-#key_enter {
-  background-color: var(--color0);
-  visibility: hidden;
 }
 
 button {

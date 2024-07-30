@@ -1,18 +1,18 @@
 var day_seed;
 var prng_seed;
+var day_word_ix;
 
-var day_words = [];
-var current_word_ix = 0;
+const num_guesses = 5;
+
+var word_scores = [];
 var current_guess = [];
-var current_score = 0;
-var total_score = 0;
 
 function prng() {
   prng_seed ^= prng_seed << 13;
   prng_seed ^= prng_seed >> 17;
   prng_seed ^= prng_seed << 5;
 
-  return (prng_seed < 0) ? ~prng_seed+1 : prng_seed;
+  return (prng_seed < 0) ? ~prng_seed + 1 : prng_seed;
 }
 
 const binary_search_index = (arr, val) => {
@@ -36,76 +36,128 @@ const binary_search_index = (arr, val) => {
   return { found: false, index: start };
 };
 
-const update_score_bar = () => {
-  window.document.getElementById("progress").innerText = `${current_word_ix + 1}/5`;
-  window.document.getElementById("score").innerText = `${current_score}`;
-  window.document.getElementById("total_score").innerText = `${total_score}`;
+const clear_rows = () => {
+  const rows = window.document.getElementById("rows");
+  rows.innerHTML = "";
 };
 
-const update_row_view = (id, chars) => {
-  const tiles = window.document.getElementById(id).getElementsByClassName("tile");
-  
+const push_row = ({ chars, score }) => {
+  const row = window.document.createElement("div");
+  row.classList.add("row");
+
+  const tile = window.document.createElement("div");
+  tile.classList.add("tile");
+
+  if (score == 0) {
+    tile.style.borderColor = "var(--color0)";
+  } else if (score <= 3) {
+    tile.style.borderColor = "var(--color1)";
+  } else if (score <= 10) {
+    tile.style.borderColor = "var(--color2)";
+  } else {
+    tile.style.borderColor = "var(--color3)";
+  }
+
+  for (i = 0; i < 5; i++) {
+    const t = tile.cloneNode();
+    t.textContent = (i < chars.length) ? chars[i] : "";
+    row.appendChild(t);
+  }
+
+  const word_score = window.document.createElement("p");
+  word_score.classList.add("word_score");
+  word_score.innerHTML = score.toString();
+  row.appendChild(word_score);
+
+  const rows = window.document.getElementById("rows");
+  rows.appendChild(row);
+};
+
+const update_guess_view = () => {
+  const guess = window.document.getElementById("guess");
+  const tiles = guess.getElementsByClassName("tile");
+
   for (i = 0; i < tiles.length; i++) {
     var tile = tiles.item(i)
 
-    tile.textContent = (i < chars.length) ? chars[i] : "";
+    tile.textContent = (i < current_guess.length) ? current_guess[i] : "";
+  }
+
+  const progress = window.document.getElementById("progress");
+  progress.textContent = `${word_scores.length}/${num_guesses}`
+};
+
+const render_all = () => {
+  clear_rows();
+  word_scores.forEach(push_row);
+
+  if (word_scores.length <= num_guesses) {
+    update_guess_view();
+  } else {
+    window.document.getElementById("user_input").style.visibility = "hidden";
+    window.document.getElementById("total").style.visibility = "visible";
+
+    var sum = 0;
+    word_scores.forEach(({ score }) => {
+      sum += score;
+    });
+
+    const total_score = window.document.getElementById("total_score");
+    total_score.textContent = sum.toString();
   }
 };
 
 const commit_guess = () => {
-  const given = day_words[current_word_ix];
-  const given_ix = binary_search_index(solutions, given).index;
   const guess = current_guess.join("");
 
-  if (guess != given && candidates.has(guess)) {
+  const search = binary_search_index(solutions, guess);
+  var allowed = search.found;
+
+  word_scores.forEach(({ word }) => {
+    if (guess === word) {
+      allowed = false;
+    }
+  });
+
+  if (allowed) {
     const search = binary_search_index(solutions, guess);
-    const score = Math.abs(search.index - given_ix) + ((search.found) ? 0 : 1);
+    const rel = search.index - day_word_ix;
+    const score = Math.abs(rel);
 
-    current_score = score;
-    total_score += score;
-    update_score_bar();
+    const word_entry = {
+      word: guess,
+      chars: guess.split(""),
+      score: score,
+      rel: rel,
+    };
 
-    if (given_ix > 0) {
-      update_row_view("before_given", solutions[given_ix - 1]);
-      window.document.getElementById("before_given").style.visibility = "visible";
+    var inserted = false;
+    for (i = 0; i < word_scores.length; i++) {
+      if (rel < word_scores[i].rel) {
+        word_scores.splice(i, 0, word_entry);
+        inserted = true;
+        break;
+      }
     }
 
-    if (given_ix < solutions.length - 1) {
-      update_row_view("after_given", solutions[given_ix + 1]);
-      window.document.getElementById("after_given").style.visibility = "visible";
+    if (!inserted) {
+      word_scores.push(word_entry);
     }
-
-    if (current_word_ix < 4) {
-      window.document.getElementById("key_enter").style.visibility = "visible";
-    }
-
-    window.document.getElementById("score").style.visibility = "visible";
-    window.document.querySelector(':root').style.setProperty('--guess-color', 'rgb(239, 156, 102)');
-
-  } else {
-    current_guess = [];
-    update_row_view("guess", current_guess);
   }
+
+  current_guess = [];
+  render_all();
 };
 
 const handle_key = (k) => {
   if (current_guess.length == 5) {
-    if (current_word_ix == 4) {
+    if (word_scores.length > num_guesses) {
       return;
     }
 
-    current_word_ix += 1;
-    current_score = 0;
     current_guess = [];
 
-    update_row_view("given", day_words[current_word_ix]);
-    window.document.getElementById("before_given").style.visibility = "hidden";
-    window.document.getElementById("after_given").style.visibility = "hidden";
-    window.document.getElementById("key_enter").style.visibility = "hidden";
-    window.document.getElementById("score").style.visibility = "hidden";
-    window.document.querySelector(':root').style.setProperty('--guess-color', 'lightgrey');
-    update_row_view("guess", current_guess);
-    update_score_bar();
+    update_guess_view();
     return;
   }
 
@@ -117,7 +169,7 @@ const handle_key = (k) => {
     return;
   }
 
-  update_row_view("guess", current_guess);
+  update_guess_view();
   if (current_guess.length == 5) {
     commit_guess();
   }
@@ -126,23 +178,23 @@ const handle_key = (k) => {
 window.onload = () => {
   const start_date = new Date("01/01/2024");
   day_seed = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
-  prng_seed = (day_seed > 0) ? day_seed : 42;
+  prng_seed = 0xC0FFEE + day_seed;
 
-  for (i = 0; i < 5; i++) {
-    var word;
+  day_word_ix = prng() % solutions.length;
+  day_word = solutions[day_word_ix];
 
-    do {
-      var rand_ix = prng() % solutions.length;
-      word = solutions[rand_ix];
-    } while (day_words.includes(word));
+  console.log(`day: ${day_seed}`);
+  console.log(`day_word_ix: ${day_word_ix}`);
+  console.log(`day_word: ${day_word}`);
 
-    day_words.push(word);
-  }
+  word_scores.push({
+    word: day_word,
+    chars: day_word.split(""),
+    score: 0,
+    rel: 0,
+  });
 
-  console.log(`DAY ${day_seed}`);
-  console.log(`words ${day_words}`);
-
-  update_row_view("given", day_words[current_word_ix]);
+  render_all();
 
   "abcdefghijklmnopqrstuvwxyz".split('').forEach((char) => {
     window.document.getElementById(`key_${char}`).addEventListener("click", () => {
@@ -150,9 +202,6 @@ window.onload = () => {
     });
   });
 
-  window.document.getElementById("key_enter").addEventListener("click", () => {
-    handle_key("Enter");
-  });
   window.document.getElementById("key_del").addEventListener("click", () => {
     handle_key("Delete");
   });

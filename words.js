@@ -2316,7 +2316,9 @@ solutions = [
   "zonal",
 ];
 
-candidates = new Set(solutions.concat([
+candidates = new Set(solutions);
+
+not_selected = [
   "aahed",
   "aalii",
   "aargh",
@@ -12974,4 +12976,4 @@ candidates = new Set(solutions.concat([
   "zygon",
   "zymes",
   "zymic",
-]));
+];

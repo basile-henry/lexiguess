@@ -14,86 +14,56 @@
   <main>
     <h1>LexiGuess</h1>
 
-    <div id="score_bar">
-      <div>
-        <p id="progress">1/5</p>
+    <div id="rows"></div>
+
+    <div id="total">
+      <span>Total score:</span>
+      <span id="total_score"></span>
+    </div>
+
+    <div id="user_input">
+      <div class="row" id="guess">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="word_score" id="progress">1/6</div>
       </div>
-      <div>
-        <p id="total_score">0</p>
+
+      <div class="keyboard">
+        <button class="key" id="key_q">Q</button>
+        <button class="key" id="key_w">W</button>
+        <button class="key" id="key_e">E</button>
+        <button class="key" id="key_r">R</button>
+        <button class="key" id="key_t">T</button>
+        <button class="key" id="key_y">Y</button>
+        <button class="key" id="key_u">U</button>
+        <button class="key" id="key_i">I</button>
+        <button class="key" id="key_o">O</button>
+        <button class="key" id="key_p">P</button>
       </div>
-    </div>
-
-    <div class="best row" id="before_given">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-    </div>
-
-    <div class="row" id="given">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-    </div>
-
-    <div class="best row" id="after_given">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-    </div>
-
-    <div>
-      <p id="score">0</p>
-    </div>
-
-    <div class="row" id="guess">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-    </div>
-
-    <div class="keyboard">
-      <button class="key" id="key_q">Q</button>
-      <button class="key" id="key_w">W</button>
-      <button class="key" id="key_e">E</button>
-      <button class="key" id="key_r">R</button>
-      <button class="key" id="key_t">T</button>
-      <button class="key" id="key_y">Y</button>
-      <button class="key" id="key_u">U</button>
-      <button class="key" id="key_i">I</button>
-      <button class="key" id="key_o">O</button>
-      <button class="key" id="key_p">P</button>
-    </div>
-    <div class="keyboard">
-      <button class="key" id="key_a">A</button>
-      <button class="key" id="key_s">S</button>
-      <button class="key" id="key_d">D</button>
-      <button class="key" id="key_f">F</button>
-      <button class="key" id="key_g">G</button>
-      <button class="key" id="key_h">H</button>
-      <button class="key" id="key_j">J</button>
-      <button class="key" id="key_k">K</button>
-      <button class="key" id="key_l">L</button>
-    </div>
-    <div class="keyboard">
-      <button class="key" id="key_del">Del</button>
-      <button class="key" id="key_z">Z</button>
-      <button class="key" id="key_x">X</button>
-      <button class="key" id="key_c">C</button>
-      <button class="key" id="key_v">V</button>
-      <button class="key" id="key_b">B</button>
-      <button class="key" id="key_n">N</button>
-      <button class="key" id="key_m">M</button>
-    </div>
-    <div class="keyboard">
-      <button class="key" id="key_enter">Next</button>
+      <div class="keyboard">
+        <button class="key" id="key_a">A</button>
+        <button class="key" id="key_s">S</button>
+        <button class="key" id="key_d">D</button>
+        <button class="key" id="key_f">F</button>
+        <button class="key" id="key_g">G</button>
+        <button class="key" id="key_h">H</button>
+        <button class="key" id="key_j">J</button>
+        <button class="key" id="key_k">K</button>
+        <button class="key" id="key_l">L</button>
+      </div>
+      <div class="keyboard">
+        <button class="key" id="key_del">Del</button>
+        <button class="key" id="key_z">Z</button>
+        <button class="key" id="key_x">X</button>
+        <button class="key" id="key_c">C</button>
+        <button class="key" id="key_v">V</button>
+        <button class="key" id="key_b">B</button>
+        <button class="key" id="key_n">N</button>
+        <button class="key" id="key_m">M</button>
+      </div>
     </div>
 
   </main>
