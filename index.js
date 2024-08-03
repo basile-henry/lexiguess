@@ -97,7 +97,9 @@ const render_all = () => {
     update_guess_view();
   } else {
     window.document.getElementById("user_input").style.visibility = "hidden";
-    window.document.getElementById("total").style.visibility = "visible";
+
+    const total_div = window.document.getElementById("total");
+    total_div.style.visibility = "visible";
 
     var sum = 0;
     word_scores.forEach(({ score }) => {
@@ -106,6 +108,41 @@ const render_all = () => {
 
     const total_score = window.document.getElementById("total_score");
     total_score.textContent = sum.toString();
+
+    var shareText = `My score in today's LexiGuess: ${sum}\n`;
+    word_scores.forEach(({ score }) => {
+      if (score == 0) {
+        shareText += "⬜";
+      } else if (score <= 3) {
+        shareText += "🟩";
+      } else if (score <= 10) {
+        shareText += "🟨";
+      } else {
+        shareText += "🟧";
+      }
+      shareText += `${score}\n`;
+    });
+
+    const shareData = {
+      title: "LexiGuess",
+      text: shareText,
+      url: "https://lexiguess.basilehenry.com",
+    };
+
+    if (navigator.canShare && navigator.canShare(shareData)) {
+      const share_btn = window.document.createElement("button");
+      share_btn.classList.add("key");
+      share_btn.innerText = "Share";
+      share_btn.onclick = () => {
+        navigator.share(shareData);
+      };
+
+      const share_btn_row = window.document.createElement("div");
+      share_btn_row.classList.add("keyboard");
+      share_btn_row.appendChild(share_btn);
+
+      total_div.appendChild(share_btn_row);
+    }
   }
 };
 
