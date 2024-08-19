@@ -10,6 +10,7 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
+  font-family: "Courier New", sans-serif;
 }
 
 main {
@@ -38,6 +39,7 @@ main {
   width: 45px;
   height: 45px;
   border: solid;
+  border-width: 3px;
   border-radius: 5px;
   font-weight: bold;
   font-size: 30px;
@@ -127,4 +129,10 @@ button {
 .wrong {
   animation-name: shake;
   animation-duration: 600ms
+}
+
+.description {
+  width: 100%;
+  font-size: 0.7em;
+  text-align: left;
 }
