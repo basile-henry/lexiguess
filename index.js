@@ -254,16 +254,5 @@ window.onload = () => {
 
 window.addEventListener("keydown", (event) => {
   const k = event.key;
-  /// Backspace doesn't seem to fire on keypress
-  if (k === "Backspace") {
-    handle_key(k);
-  }
-});
-
-window.addEventListener("keypress", (event) => {
-  const k = event.key;
-  /// Backspace doesn't seem to fire on keypress, but making sure of it here
-  if (k != "Backspace") {
-    handle_key(k);
-  }
+  handle_key(k);
 });
