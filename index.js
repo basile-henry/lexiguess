@@ -109,7 +109,7 @@ const render_all = () => {
     const total_score = window.document.getElementById("total_score");
     total_score.textContent = sum.toString();
 
-    var shareText = `My score in today's LexiGuess: ${sum}\n`;
+    var shareText = `I got ${sum} in LexiGuess (day ${day_seed})!\n`;
     word_scores.forEach(({ score }) => {
       if (score == 0) {
         shareText += "⬜";
@@ -123,18 +123,24 @@ const render_all = () => {
       shareText += `${score}\n`;
     });
 
+    shareText += "https://lexiguess.basilehenry.com";
+
     const shareData = {
       title: "LexiGuess",
       text: shareText,
-      url: "https://lexiguess.basilehenry.com",
     };
 
-    if (navigator.canShare && navigator.canShare(shareData)) {
+    if ((navigator.canShare && navigator.canShare(shareData)) || navigator.clipboard) {
       const share_btn = window.document.createElement("button");
       share_btn.classList.add("key");
       share_btn.innerText = "Share";
       share_btn.onclick = () => {
-        navigator.share(shareData);
+        if (navigator.canShare && navigator.canShare(shareData)) {
+          navigator.share(shareData);
+        } else {
+          navigator.clipboard.writeText(shareText);
+          share_btn.innerText = "Share (copied)";
+        }
       };
 
       const share_btn_row = window.document.createElement("div");
