@@ -126,7 +126,6 @@ const render_all = () => {
     shareText += "https://lexiguess.basilehenry.com";
 
     const shareData = {
-      title: "LexiGuess",
       text: shareText,
     };
 
