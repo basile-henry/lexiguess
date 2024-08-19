@@ -188,36 +188,35 @@ const commit_guess = () => {
     if (!inserted) {
       word_scores.push(word_entry);
     }
+
+    // Reset current guess
+    current_guess = [];
   }
 
-  current_guess = [];
   render_all();
 };
 
 const handle_key = (k) => {
-  if (current_guess.length == 5) {
-    if (word_scores.length > num_guesses) {
-      return;
-    }
-
-    current_guess = [];
-
-    update_guess_view();
-    return;
-  }
-
-  if (k.length == 1 && k.match(/[a-z]/i)) {
+  if (current_guess.length < 5 && k.length == 1 && k.match(/[a-z]/i)) {
     current_guess.push(k);
   } else if (k === "Backspace" || k === "Delete") {
     current_guess.pop();
+  } else if (k === "Enter" && current_guess.length == 5) {
+    commit_guess();
+
+    if (current_guess.length == 5) {
+      const guess_row = window.document.getElementById("guess");
+      guess_row.classList.add("wrong");
+
+      window.setTimeout(() => {
+        guess_row.classList.remove("wrong");
+      }, 600);
+    }
   } else {
     return;
   }
 
   update_guess_view();
-  if (current_guess.length == 5) {
-    commit_guess();
-  }
 };
 
 window.onload = () => {
@@ -255,6 +254,10 @@ window.onload = () => {
 
   window.document.getElementById("key_del").addEventListener("click", () => {
     handle_key("Delete");
+  });
+
+  window.document.getElementById("key_enter").addEventListener("click", () => {
+    handle_key("Enter");
   });
 };
 
