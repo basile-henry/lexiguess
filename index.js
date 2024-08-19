@@ -190,6 +190,8 @@ const commit_guess = () => {
 
     // Reset current guess
     current_guess = [];
+
+    window.localStorage.setItem(`${day_seed}`, JSON.stringify(word_scores));
   }
 
   render_all();
@@ -242,6 +244,15 @@ window.onload = () => {
     score: 0,
     rel: 0,
   });
+
+  const saved = window.localStorage.getItem(`${day_seed}`);
+
+  if (saved != null) {
+    word_scores = JSON.parse(saved);
+  } else {
+    // No need to remember old days
+    window.localStorage.clear();
+  }
 
   render_all();
 
