@@ -1,5 +1,6 @@
 var solutions = small_set;
 
+var saved_game_key;
 var day_seed;
 var prng_seed;
 var day_word_ix;
@@ -191,7 +192,7 @@ const commit_guess = () => {
     // Reset current guess
     current_guess = [];
 
-    window.localStorage.setItem(`${day_seed}`, JSON.stringify(word_scores));
+    window.localStorage.setItem(saved_game_key, JSON.stringify(word_scores));
   }
 
   render_all();
@@ -226,7 +227,8 @@ window.onload = () => {
   prng_seed = 0xC0FFEE + day_seed;
 
   const params = new URLSearchParams(window.location.search);
-  if (params.get("big_set") == "1") {
+  const use_big_set = params.get("big_set") == "1";
+  if (use_big_set) {
     solutions = big_set;
     console.log("Using big set of words");
   }
@@ -245,7 +247,8 @@ window.onload = () => {
     rel: 0,
   });
 
-  const saved = window.localStorage.getItem(`${day_seed}`);
+  saved_game_key = use_big_set ? `${day_seed}_big_set` : `${day_seed}`;
+  const saved = window.localStorage.getItem(saved_game_key);
 
   if (saved != null) {
     word_scores = JSON.parse(saved);
