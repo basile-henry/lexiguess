@@ -200,7 +200,7 @@ const commit_guess = () => {
 
 const handle_key = (k) => {
   if (current_guess.length < 5 && k.length == 1 && k.match(/[a-z]/i)) {
-    current_guess.push(k);
+    current_guess.push(k.toLowerCase());
   } else if (k === "Backspace" || k === "Delete") {
     current_guess.pop();
   } else if (k === "Enter" && current_guess.length == 5) {
