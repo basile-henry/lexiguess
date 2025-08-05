@@ -1,8 +1,9 @@
-var solutions = small_set;
+var hard_mode;
+var word_comparison;
+const word_set = new Set(words);
 
 var saved_game_key;
-var day_seed;
-var prng_seed;
+var day;
 var day_word_ix;
 
 const num_guesses = 5;
@@ -10,34 +11,9 @@ const num_guesses = 5;
 var word_scores = [];
 var current_guess = [];
 
-function prng() {
-  prng_seed ^= prng_seed << 13;
-  prng_seed ^= prng_seed >> 17;
-  prng_seed ^= prng_seed << 5;
-
-  return (prng_seed < 0) ? ~prng_seed + 1 : prng_seed;
+const reverse_string = (str) => {
+  return str.split('').reverse().join('');
 }
-
-const binary_search_index = (arr, val) => {
-  let start = 0;
-  let end = arr.length - 1;
-
-  while (start <= end) {
-    let mid = Math.floor((start + end) / 2);
-
-    if (arr[mid] === val) {
-      return { found: true, index: mid };
-    }
-
-    if (val < arr[mid]) {
-      end = mid - 1;
-    } else {
-      start = mid + 1;
-    }
-  }
-
-  return { found: false, index: start };
-};
 
 const clear_rows = () => {
   const rows = window.document.getElementById("rows");
@@ -110,7 +86,7 @@ const render_all = () => {
     const total_score = window.document.getElementById("total_score");
     total_score.textContent = sum.toString();
 
-    var shareText = `I got ${sum} in LexiGuess (day ${day_seed})!\n`;
+    var shareText = `I got ${sum} in LexiGuess (day ${day})!\n`;
     word_scores.forEach(({ score }) => {
       if (score == 0) {
         shareText += "⬜";
@@ -155,8 +131,7 @@ const render_all = () => {
 const commit_guess = () => {
   const guess = current_guess.join("");
 
-  const search = binary_search_index(solutions, guess);
-  var allowed = search.found;
+  var allowed = word_set.has(guess);
 
   word_scores.forEach(({ word }) => {
     if (guess === word) {
@@ -165,8 +140,8 @@ const commit_guess = () => {
   });
 
   if (allowed) {
-    const search = binary_search_index(solutions, guess);
-    const rel = search.index - day_word_ix;
+    const ix = words.findIndex((x) => x == guess);
+    const rel = ix - day_word_ix;
     const score = Math.abs(rel);
 
     const word_entry = {
@@ -223,22 +198,44 @@ const handle_key = (k) => {
 
 window.onload = () => {
   const start_date = new Date("01/01/2024");
-  day_seed = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
-  prng_seed = 0xC0FFEE + day_seed;
+  const day = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
 
   const params = new URLSearchParams(window.location.search);
-  const use_big_set = params.get("big_set") == "1";
-  if (use_big_set) {
-    solutions = big_set;
-    console.log("Using big set of words");
+  hard_mode = params.get("hard_mode") == "1";
+
+  day_word_ix = day % words.length;
+  day_word = words[day_word_ix];
+
+  const mode_link = document.getElementById("mode");
+  const currentUrl = window.location.href;
+  const url = new URL(currentUrl);
+
+  if (hard_mode) {
+    mode_link.textContent = "Back to normal mode";
+    url.searchParams.set("hard_mode", "0");
+    mode_link.href = url;
+
+    word_comparison = (a, b) => {
+      const revA = reverse_string(a);
+      const revB = reverse_string(b);
+      return revA.localeCompare(revB);
+    };
+  } else {
+    mode_link.textContent = "Try hard mode 😈";
+    url.searchParams.set("hard_mode", "1");
+    mode_link.href = url;
+
+    word_comparison = (a, b) => {
+      return a.localeCompare(b);
+    };
   }
 
-  day_word_ix = prng() % solutions.length;
-  day_word = solutions[day_word_ix];
+  words.sort(word_comparison);
+  day_word_ix = words.findIndex((x) => x === day_word);
 
-  console.log(`day: ${day_seed}`);
-  console.log(`day_word_ix: ${day_word_ix}`);
+  console.log(`day: ${day}`);
   console.log(`day_word: ${day_word}`);
+  console.log(`hard_mode: ${hard_mode}`);
 
   word_scores.push({
     word: day_word,
@@ -247,14 +244,12 @@ window.onload = () => {
     rel: 0,
   });
 
-  saved_game_key = use_big_set ? `${day_seed}_big_set` : `${day_seed}`;
+  saved_game_key = hard_mode ? `${day}_hard_mode` : `${day}_normal_mode`;
+  console.log(`localStorage key: ${saved_game_key}`);
   const saved = window.localStorage.getItem(saved_game_key);
 
   if (saved != null) {
     word_scores = JSON.parse(saved);
-  } else {
-    // No need to remember old days
-    window.localStorage.clear();
   }
 
   render_all();
