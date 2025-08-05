@@ -137,3 +137,9 @@ button {
   font-size: 0.7em;
   text-align: left;
 }
+
+.mode {
+  width: 100%;
+  font-size: 0.7em;
+  text-align: right;
+}
