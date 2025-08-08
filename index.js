@@ -87,6 +87,7 @@ const render_all = () => {
     total_score.textContent = sum.toString();
 
     var shareText = `I got ${sum} in LexiGuess (day ${day})!\n`;
+    shareText += hard_mode ? "In hard mode! 😈\n" : "";
     word_scores.forEach(({ score }) => {
       if (score == 0) {
         shareText += "⬜";
@@ -198,7 +199,7 @@ const handle_key = (k) => {
 
 window.onload = () => {
   const start_date = new Date("01/01/2024");
-  const day = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
+  day = Math.ceil((Date.now() - start_date.getTime()) / (24 * 60 * 60 * 1000));
 
   const params = new URLSearchParams(window.location.search);
   hard_mode = params.get("hard_mode") == "1";
